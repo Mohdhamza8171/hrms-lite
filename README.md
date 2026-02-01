@@ -65,7 +65,7 @@ pip install -r requirements.txt
 Inside the **backend** folder create a file named `.env`:
 
 ```
-MONGO_URL=mongodb://localhost:27017/hrmslite
+MONGO_URL=mongodb+srv://mohdhamza339_db_user:99AQMEuvZwLmHm3n@mohdhamza.p5prdup.mongodb.net/hrmslite?retryWrites=true&w=majority
 SECRET_KEY=djagno-super-secret-key-change-this
 JWT_SECRET=djagno-super-secret-key-change-this
 ```
