@@ -23,10 +23,31 @@ function Login() {
         <div className="container mt-5">
             <h2>Login</h2>
             <form onSubmit={handleLogin}>
-                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control mb-2" required />
-                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control mb-2" required />
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="form-control mb-2"
+                    required
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="form-control mb-2"
+                    required
+                />
                 {error && <p className="text-danger">{error}</p>}
-                <button className="btn btn-primary">Login</button>
+                <button className="btn btn-primary me-2">Login</button>
+                <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={() => navigate("/signup")}
+                >
+                    Sign Up
+                </button>
             </form>
         </div>
     );
