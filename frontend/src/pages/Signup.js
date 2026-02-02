@@ -1,31 +1,19 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../api";
 
 function Signup() {
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [role, setRole] = useState(""); // default empty
+    const [form, setForm] = useState({ username: "", email: "", password: "", role: "" });
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
     const handleSignup = async (e) => {
         e.preventDefault();
-
-        if (!role) {
-            setError("Please select a role");
-            return;
-        }
+        if (!form.role) return setError("Please select a role");
 
         try {
-            await axios.post("http://127.0.0.1:8000/api/register/", {
-                username,
-                email,
-                password,
-                role,
-            });
-            navigate("/"); // redirect to login after successful signup
+            await registerUser(form);
+            navigate("/");
         } catch (err) {
             setError(err.response?.data?.error || "Signup failed");
         }
@@ -35,61 +23,18 @@ function Signup() {
         <div className="container mt-5">
             <h2>Sign Up</h2>
             <form onSubmit={handleSignup}>
-                {/* Username */}
-                <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                    className="form-control mb-2"
-                />
-
-                {/* Email */}
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="form-control mb-2"
-                    autoComplete="off"
-                />
-
-                {/* Password */}
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="form-control mb-2"
-                    autoComplete="new-password"
-                />
-
-                {/* Role Dropdown */}
-                <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="form-select mb-2"
-                    required
-                >
-                    <option value="" disabled>
-                        Select Role
-                    </option>
+                <input type="text" placeholder="Username" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} className="form-control mb-2" required />
+                <input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="form-control mb-2" required />
+                <input type="password" placeholder="Password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="form-control mb-2" required />
+                <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="form-select mb-2" required>
+                    <option value="" disabled>Select Role</option>
                     <option value="employee">Employee</option>
                     <option value="admin">Admin</option>
                     <option value="hr">HR</option>
                 </select>
-
                 {error && <p className="text-danger">{error}</p>}
-
                 <button className="btn btn-success">Sign Up</button>
             </form>
-
-            <div className="mt-3">
-                <Link to="/">Back to Login</Link>
-            </div>
         </div>
     );
 }
