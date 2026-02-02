@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { listEmployees, listAttendance, addAttendance, deleteAttendance } from "../api";
+import { useEffect, useState, useCallback } from "react";
+import axios from "axios";
+import { addAttendance, deleteAttendance } from "../api";
 
 function Attendance() {
     const [employees, setEmployees] = useState([]);
@@ -10,10 +11,30 @@ function Attendance() {
     const [error, setError] = useState("");
     const token = localStorage.getItem("token");
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { fetchEmployees(); fetchAttendance(); }, []);
 
-    const fetchEmployees = async () => { try { const res = await listEmployees(token); setEmployees(res.data); } catch { setError("Failed to load employees"); } };
-    const fetchAttendance = async () => { try { const res = await listAttendance(token); setAttendance(res.data); } catch { setError("Failed to load attendance"); } };
+    const fetchEmployees = useCallback(async () => {
+        try {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/employees/`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setEmployees(res.data);
+        } catch {
+            setError("Failed to load employees");
+        }
+    }, [token]);
+
+    const fetchAttendance = useCallback(async () => {
+        try {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/attendance/`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setAttendance(res.data);
+        } catch {
+            setError("Failed to load attendance records");
+        }
+    }, [token]);
 
     const markAttendance = async (e) => {
         e.preventDefault();

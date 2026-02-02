@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { listEmployees, deleteEmployee } from "../api";
+import { deleteEmployee } from "../api";
+import axios from "axios";
+
 
 function Dashboard() {
     const [employees, setEmployees] = useState([]);
@@ -8,19 +10,25 @@ function Dashboard() {
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
-        if (!token) navigate("/");
-        fetchEmployees();
-    }, []);
+        if (!token) {
+            navigate("/");
+        } else {
+            fetchEmployees();
+        }
+    }, [token, navigate, fetchEmployees]);
 
-    const fetchEmployees = async () => {
+    const fetchEmployees = useCallback(async () => {
         try {
-            const res = await listEmployees(token);
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/employees/`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             setEmployees(res.data);
         } catch {
             setError("Failed to fetch employees");
         }
-    };
+    }, [token]);
 
     const handleDelete = async (id) => {
         if (!window.confirm("Delete this employee?")) return;
