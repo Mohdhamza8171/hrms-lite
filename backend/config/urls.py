@@ -19,9 +19,11 @@ from django.urls import path
 from hrms import views
 from hrms.auth import *
 from hrms.views import *
+from django.http import HttpResponse
 
 
 urlpatterns = [
+    path("", lambda request: HttpResponse("HRMS Backend is Running ✅")),
     # Auth
     path("api/register/", register_user),
     path("api/login/", login_user),
