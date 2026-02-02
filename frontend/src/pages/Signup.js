@@ -1,24 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../api";
 
 function Signup() {
-    const [form, setForm] = useState({ username: "", email: "", password: "", role: "" });
+    const [form, setForm] = useState({
+        username: "",
+        email: "",
+        password: "",
+        role: ""
+    });
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    // Clear form on mount (optional but ensures empty fields)
-    useEffect(() => {
-        setForm({ username: "", email: "", password: "", role: "" });
-    }, []);
-
     const handleSignup = async (e) => {
         e.preventDefault();
-        if (!form.role) return setError("Please select a role");
+
+        if (!form.role) {
+            return setError("Please select a role");
+        }
 
         try {
             await registerUser(form);
-            navigate("/");
+            navigate("/"); // redirect to login page after successful signup
         } catch (err) {
             setError(err.response?.data?.error || "Signup failed");
         }
@@ -27,11 +30,12 @@ function Signup() {
     return (
         <div className="container mt-5">
             <h2>Sign Up</h2>
-            <form onSubmit={handleSignup}>
+            <form onSubmit={handleSignup} autoComplete="off">
                 <input
                     type="text"
                     placeholder="Username"
                     value={form.username}
+                    autoComplete="off"
                     onChange={(e) => setForm({ ...form, username: e.target.value })}
                     className="form-control mb-2"
                     required
@@ -40,6 +44,7 @@ function Signup() {
                     type="email"
                     placeholder="Email"
                     value={form.email}
+                    autoComplete="off"
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     className="form-control mb-2"
                     required
@@ -48,6 +53,7 @@ function Signup() {
                     type="password"
                     placeholder="Password"
                     value={form.password}
+                    autoComplete="new-password"
                     onChange={(e) => setForm({ ...form, password: e.target.value })}
                     className="form-control mb-2"
                     required
