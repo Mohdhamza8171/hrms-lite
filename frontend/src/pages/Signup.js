@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../api";
 
@@ -6,6 +6,11 @@ function Signup() {
     const [form, setForm] = useState({ username: "", email: "", password: "", role: "" });
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    // Clear form on mount (optional but ensures empty fields)
+    useEffect(() => {
+        setForm({ username: "", email: "", password: "", role: "" });
+    }, []);
 
     const handleSignup = async (e) => {
         e.preventDefault();
@@ -23,10 +28,36 @@ function Signup() {
         <div className="container mt-5">
             <h2>Sign Up</h2>
             <form onSubmit={handleSignup}>
-                <input type="text" placeholder="Username" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} className="form-control mb-2" required />
-                <input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="form-control mb-2" required />
-                <input type="password" placeholder="Password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="form-control mb-2" required />
-                <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="form-select mb-2" required>
+                <input
+                    type="text"
+                    placeholder="Username"
+                    value={form.username}
+                    onChange={(e) => setForm({ ...form, username: e.target.value })}
+                    className="form-control mb-2"
+                    required
+                />
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    className="form-control mb-2"
+                    required
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={form.password}
+                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    className="form-control mb-2"
+                    required
+                />
+                <select
+                    value={form.role}
+                    onChange={(e) => setForm({ ...form, role: e.target.value })}
+                    className="form-select mb-2"
+                    required
+                >
                     <option value="" disabled>Select Role</option>
                     <option value="employee">Employee</option>
                     <option value="admin">Admin</option>
