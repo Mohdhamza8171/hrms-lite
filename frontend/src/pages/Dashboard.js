@@ -10,15 +10,6 @@ function Dashboard() {
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        if (!token) {
-            navigate("/");
-        } else {
-            fetchEmployees();
-        }
-    }, [token, navigate, fetchEmployees]);
-
     const fetchEmployees = useCallback(async () => {
         try {
             const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/employees/`, {
@@ -35,6 +26,15 @@ function Dashboard() {
         await deleteEmployee(token, id);
         fetchEmployees();
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        if (!token) {
+            navigate("/");
+        } else {
+            fetchEmployees();
+        }
+    }, [token, navigate, fetchEmployees]);
 
     return (
         <div className="container mt-4">

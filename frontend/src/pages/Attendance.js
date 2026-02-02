@@ -11,8 +11,7 @@ function Attendance() {
     const [error, setError] = useState("");
     const token = localStorage.getItem("token");
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => { fetchEmployees(); fetchAttendance(); }, []);
+
 
     const fetchEmployees = useCallback(async () => {
         try {
@@ -35,6 +34,9 @@ function Attendance() {
             setError("Failed to load attendance records");
         }
     }, [token]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => { fetchEmployees(); fetchAttendance(); }, []);
 
     const markAttendance = async (e) => {
         e.preventDefault();
