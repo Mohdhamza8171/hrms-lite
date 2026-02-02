@@ -36,12 +36,41 @@ function Dashboard() {
         }
     }, [token, navigate, fetchEmployees]);
 
+    const handleLogout = async () => {
+        const token = localStorage.getItem("token");
+
+        try {
+            await axios.post(
+                `${process.env.REACT_APP_API_URL}/api/logout/`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+        } catch (err) {
+            console.log("Logout API error (safe to ignore):", err.response?.data);
+        }
+
+        // Always clear token even if API fails
+        localStorage.removeItem("token");
+        navigate("/");
+    };
+
     return (
         <div className="container mt-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Dashboard</h2>
-                <button className="btn btn-primary" onClick={() => navigate("/add-employee")}>Add Employee</button>
-                <button className="btn btn-secondary" onClick={() => navigate("/attendance")}>Manage Attendance</button>
+                <div className="d-flex gap-2">
+                    <button className="btn btn-primary" onClick={() => navigate("/add-employee")}>
+                        Add Employee
+                    </button>
+                    <button className="btn btn-secondary" onClick={() => navigate("/attendance")}>
+                        Manage Attendance
+                    </button>
+                    <button className="btn btn-danger" onClick={handleLogout}>
+                        Logout
+                    </button>
+                </div>
             </div>
             {error && <p className="text-danger">{error}</p>}
             <table className="table table-striped">
