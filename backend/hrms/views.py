@@ -214,7 +214,7 @@ def update_employee(request, emp_id):
 def delete_employee(request, emp_id):  # 🔥 changed here
 
     if request.method != "DELETE":
-        return JsonResponse({"error": "Invalid request"}, status=400)
+        return JsonResponse({"error": "Invalid request"}, status=405)
 
     try:
         employee = Employee.objects(id=ObjectId(emp_id)).first()
@@ -241,7 +241,7 @@ def add_attendance(request):
         return JsonResponse({"error": "Invalid request"}, status=400)
 
     try:
-        data = json.loads(request.body)
+        data = parse_body(request)
 
         employee_id = data.get("employee_id")
         date = data.get("date")
@@ -285,11 +285,12 @@ def list_attendance(request):
     return JsonResponse(data, safe=False)
 
 
+@csrf_exempt
 @token_required
 @roles_allowed("admin", "hr", "employee")
 def get_attendance_by_employee(request, emp_id):
     try:
-        emp = Employee.objects.get(id=emp_id)
+        emp = Employee.objects.get(id=ObjectId(emp_id))
         records = Attendance.objects(employee=emp)
 
         data = [
@@ -301,29 +302,8 @@ def get_attendance_by_employee(request, emp_id):
             for att in records
         ]
         return JsonResponse(data, safe=False)
-    except DoesNotExist:
+    except (DoesNotExist, ValidationError):
         return JsonResponse({"error": "Employee not found"}, status=404)
-
-
-@csrf_exempt
-@token_required
-def update_attendance(request, att_id):
-    if request.method not in ["PUT", "PATCH"]:
-        return JsonResponse({"error": "PUT or PATCH required"}, status=405)
-
-    try:
-        data = parse_body(request)
-        att = Attendance.objects.get(id=att_id)
-
-        if "status" in data:
-            att.status = data["status"]
-        if "date" in data:
-            att.date = datetime.strptime(data["date"], "%Y-%m-%d").date()
-
-        att.save()
-        return JsonResponse({"message": "Attendance updated"})
-    except DoesNotExist:
-        return JsonResponse({"error": "Attendance record not found"}, status=404)
 
 
 @csrf_exempt
